@@ -1,7 +1,7 @@
 class ScoresController < ApplicationController
   def index
     @scores = Scores.top_ten
-    render json: @scores
+    render json: { @scores, include: :user }
   end
 
   def update
