@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-
+import Question from '../components/Question'
 
 class Game extends Component {
 
@@ -7,7 +7,8 @@ class Game extends Component {
   render () {
     return (
       <div className="game">
-        This is the game Component
+        <h1>This is the game Component</h1>
+        < Question content="what is your favorite color?" />
       </div>
     )
   }
