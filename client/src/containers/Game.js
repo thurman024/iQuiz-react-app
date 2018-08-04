@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Question from '../components/Question'
 import QuestionCount from '../components/QuestionCount'
 import AnswerOption from '../components/AnswerOptions'
+import fetch from 'isomorphic-fetch';
 
 const apiCall = 'https://opentdb.com/api.php?amount=10&type=multiple'
 
@@ -28,7 +29,40 @@ class Game extends Component {
 
 
   render () {
+
+
+    function renderQuestionCount(props) {
+      return (
+        < QuestionCount
+        counter={props.counter}
+        total={props.questionData.length}
+        />
+      )
+    }
+
+    function renderQuestion(props) {
+      const currentId = props.questionId
+      const currentQuestion = props.questionData[currentId]
+
+      return (
+        < Question
+        content={currentQuestion.question}
+        />
+      )
+    }
+
+    function questionLoaded(data) {
+      if (data.questionData.length === 0) {
+        return <span>Loading Questions</span>
+      }
+      else {
+        return renderQuestion(data)
+      }
+    }
+
     function renderAnswerOptions(key) {
+      // const answers = 
+
       return (
         <AnswerOption
           // key={key.content}
@@ -40,11 +74,14 @@ class Game extends Component {
         />
       );
     }
+
+
     return (
       <div className="game">
         <h1>This is the game Component</h1>
-        < QuestionCount counter='1' total='10' />
-        < Question content={this.state.questionData[questionId].question} />
+        {renderQuestionCount(this.state)}
+        {questionLoaded(this.state)}
+
         <ul className="answerOptions">
 
         </ul>
