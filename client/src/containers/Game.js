@@ -29,6 +29,9 @@ class Game extends Component {
 
 
   render () {
+    if (this.state.questionData.length > 0) {
+
+    }
 
 
     function renderQuestionCount(props) {
@@ -51,9 +54,9 @@ class Game extends Component {
       )
     }
 
-    function questionLoaded(data) {
+    function apiResponded(data) {
       if (data.questionData.length === 0) {
-        return <span>Loading Questions</span>
+        return <span>Loading Questions...</span>
       }
       else {
         return renderQuestion(data)
@@ -61,29 +64,59 @@ class Game extends Component {
     }
 
     function renderAnswerOptions(key) {
-      // const answers = 
 
-      return (
-        <AnswerOption
-          // key={key.content}
-          // answerContent={key.content}
-          // answerType={key.type}
-          // answer={props.answer}
-          // questionId={props.questionId}
-          // onAnswerSelected={props.onAnswerSelected}
-        />
-      );
+      if (key.questionData.length === 0) {
+        return <li>Loading Answers...</li>
+      }
+      else {
+        let counter = 0
+        const i = key.questionId
+        const answerArray = [key.questionData[i].correct_answer,
+          key.questionData[i].incorrect_answers]
+        const answers = shuffleArray(answerArray)
+        answers.map(answer => {
+          ++counter
+          return (
+            <AnswerOption
+              key={counter}
+              answerContent={answers[i-1]}
+              // answerType={key.type}
+              // answer={props.answer}
+              // questionId={props.questionId}
+              // onAnswerSelected={props.onAnswerSelected}
+            />
+        )});
+      }
     }
 
+    function shuffleArray(array) {
+      let currentIndex = array.length
+      let temporaryValue, randomIndex;
+
+      // While there remain elements to shuffle...
+      while (0 !== currentIndex) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+      }
+
+      return array;
+    };
 
     return (
       <div className="game">
         <h1>This is the game Component</h1>
         {renderQuestionCount(this.state)}
-        {questionLoaded(this.state)}
+        {apiResponded(this.state)}
 
         <ul className="answerOptions">
-
+          {renderAnswerOptions(this.state)}
         </ul>
       </div>
     )
