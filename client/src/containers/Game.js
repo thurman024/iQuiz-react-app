@@ -1,101 +1,96 @@
-import React, { Component } from 'react'
-import Question from '../components/Question'
-import QuestionCount from '../components/QuestionCount'
-import AnswerOption from '../components/AnswerOptions'
+import React, { Component } from 'react';
+import Question from '../components/Question';
+import QuestionCount from '../components/QuestionCount';
+import AnswerOption from '../components/AnswerOptions';
 import fetch from 'isomorphic-fetch';
 
-const apiCall = 'https://opentdb.com/api.php?amount=10&type=multiple'
+const apiCall = 'https://opentdb.com/api.php?amount=10&type=multiple';
 
 class Game extends Component {
-  constructor () {
+  constructor() {
     super();
 
     this.state = {
-     counter: 0,
-     questionId: 0,
-     questionData: [],
-     answersCount: 0,
-     result: ''
+      counter: 0,
+      questionId: 0,
+      questionData: [],
+      answersCount: 0,
+      result: ''
     };
   }
 
   componentWillMount() {
     fetch(apiCall)
       .then(res => res.json())
-      .then(response => this.setState({
-        questionData: response.results
-      }))
+      .then(response =>
+        this.setState({
+          questionData: response.results
+        })
+      );
   }
 
-
-  render () {
+  render() {
     if (this.state.questionData.length > 0) {
-
     }
-
 
     function renderQuestionCount(props) {
       return (
-        < QuestionCount
-        counter={props.counter}
-        total={props.questionData.length}
+        <QuestionCount
+          counter={props.counter}
+          total={props.questionData.length}
         />
-      )
+      );
     }
 
     function renderQuestion(props) {
-      const currentId = props.questionId
-      const currentQuestion = props.questionData[currentId]
+      const currentId = props.questionId;
+      const currentQuestion = props.questionData[currentId];
 
-      return (
-        < Question
-        content={currentQuestion.question}
-        />
-      )
+      return <Question content={currentQuestion.question} />;
     }
 
     function apiResponded(data) {
       if (data.questionData.length === 0) {
-        return <span>Loading Questions...</span>
-      }
-      else {
-        return renderQuestion(data)
+        return <span>Loading Questions...</span>;
+      } else {
+        return renderQuestion(data);
       }
     }
 
-    function renderAnswerOptions(key) {
+    function answersLoaded(props) {
+      if (props.questionData.length === 0) {
+        return <li>Loading Answers...</li>;
+      } else {
+        return renderAnswerOptions(props);
+      }
+    }
 
-      if (key.questionData.length === 0) {
-        return <li>Loading Answers...</li>
-      }
-      else {
-        let counter = 0
-        const i = key.questionId
-        const answerArray = [key.questionData[i].correct_answer,
-          key.questionData[i].incorrect_answers]
-        const answers = shuffleArray(answerArray)
-        answers.map(answer => {
-          ++counter
-          return (
-            <AnswerOption
-              key={counter}
-              answerContent={answers[i-1]}
-              // answerType={key.type}
-              // answer={props.answer}
-              // questionId={props.questionId}
-              // onAnswerSelected={props.onAnswerSelected}
-            />
-        )});
-      }
+    function renderAnswerOptions(props) {
+      // let counter = 0;
+      let i = props.questionId;
+      const answerArray = [
+        props.questionData[i].correct_answer,
+        ...props.questionData[i].incorrect_answers
+      ];
+      const answers = shuffleArray(answerArray);
+      return (
+        <AnswerOption
+          // key={i}
+          answerContent={answers}
+          // answerType={key.type}
+          // answer={props.answer}
+          // questionId={props.questionId}
+          // onAnswerSelected={props.onAnswerSelected}
+        />
+      );
     }
 
     function shuffleArray(array) {
-      let currentIndex = array.length
+      let currentIndex = array.length;
       let temporaryValue, randomIndex;
 
       // While there remain elements to shuffle...
       while (0 !== currentIndex) {
-
         // Pick a remaining element...
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
@@ -107,7 +102,7 @@ class Game extends Component {
       }
 
       return array;
-    };
+    }
 
     return (
       <div className="game">
@@ -115,11 +110,9 @@ class Game extends Component {
         {renderQuestionCount(this.state)}
         {apiResponded(this.state)}
 
-        <ul className="answerOptions">
-          {renderAnswerOptions(this.state)}
-        </ul>
+        <ul className="answerOptions">{answersLoaded(this.state)}</ul>
       </div>
-    )
+    );
   }
 }
-export default Game
+export default Game;
