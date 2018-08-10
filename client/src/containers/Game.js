@@ -14,6 +14,7 @@ class Game extends Component {
       counter: 0,
       questionId: 0,
       questionData: [],
+      answer: '',
       answersCount: 0,
       result: ''
     };
@@ -65,8 +66,17 @@ class Game extends Component {
       }
     }
 
+    function handleAnswerSelected(event) {
+      this.setUserAnswer(event.currentTarget.value);
+      if (this.state.questionId < this.state.questionData.length) {
+        this.nextQuestion();
+      } else {
+        this.showResults();
+      }
+    }
+
     function renderAnswerOptions(props) {
-      // let counter = 0;
+      // const fn = this.handleAnswerSelected;
       let i = props.questionId;
       const answerArray = [
         props.questionData[i].correct_answer,
@@ -75,12 +85,11 @@ class Game extends Component {
       const answers = shuffleArray(answerArray);
       return (
         <AnswerOption
-          // key={i}
           answerContent={answers}
           // answerType={key.type}
           // answer={props.answer}
           // questionId={props.questionId}
-          // onAnswerSelected={props.onAnswerSelected}
+          // onAnswerSelected={fn}
         />
       );
     }
@@ -103,6 +112,21 @@ class Game extends Component {
 
       return array;
     }
+
+    function setUserAnswer(answer) {
+      this.setState({
+        answer: answer
+      });
+    }
+
+    function nextQuestion() {
+      const i = this.state.questionId;
+      this.setState({
+        questionId: i + 1
+      });
+    }
+
+    function showResults() {}
 
     return (
       <div className="game">
